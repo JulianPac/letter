@@ -10,7 +10,7 @@
         body {
             margin: 0;
             padding: 0;
-            background-color: #FDF5E6; /* Cream White */
+            background-color: #FDF5E6;
             font-family: 'VT323', monospace;
             height: 100vh;
             display: flex;
@@ -18,17 +18,40 @@
             align-items: center;
             overflow: hidden;
             text-align: center;
+            position: relative; 
         }
 
-        /* Common style for all screens */
-        .screen {
-            position: absolute; /* Allows them to sit on top of each other during fades */
+        /*BACKGROUND GIF LAYER*/
+        body::before {
+            content: "";
+            position: fixed;
+            top: 0;
+            left: 0;
             width: 100%;
-            transition: opacity 1s ease-in-out; /* The 1-second fade magic */
+            height: 100%;
+            
+            /* The GIF URL */
+            background-image: url('https://media1.tenor.com/m/S3KOkOku9M4AAAAd/hachiware-chiikawa.gif');
+        
+            background-repeat: repeat; 
+            background-size: 250px auto; 
+            
+            opacity: 0.35;
+            
+            z-index: 0;
+            pointer-events: none;
+        }
+
+
+        .screen {
+            position: absolute; 
+            width: 100%;
+            transition: opacity 1s ease-in-out; 
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
+
         }
 
         /* INTRO SCREEN */
@@ -39,29 +62,48 @@
 
         /* QUESTION SCREEN */
         #question-screen {
-            opacity: 0; /* Invisible start */
+            opacity: 0; 
             z-index: 2;
-            pointer-events: none; /* Cannot click buttons while hidden */
+            pointer-events: none; 
         }
 
         /* SUCCESS SCREEN */
         #success-message {
-            opacity: 0; /* Invisible start */
+            opacity: 0; 
             z-index: 1;
-            color: #FF69B4;
-            font-size: 5rem;
+        }
+
+        #success-message h1 {
+             color: #FF69B4; 
+             font-size: 5rem;
+             margin-bottom: 20px;
+
+             text-shadow: 2px 2px 0 #ffffff, -2px -2px 0 #ffffff, 2px -2px 0 #ffffff, -2px 2px 0 #ffffff;
+        }
+        
+        #success-message img {
+            max-width: 80%;
+            height: auto;
+            border: 4px solid #FF69B4;
+            border-radius: 12px;
+            box-shadow: 4px 4px 0px rgba(0,0,0,0.1);
+            background-color: rgba(255,255,255,0.5);
         }
 
         h1 {
             font-size: 4rem;
             color: #000000;
             margin-bottom: 40px;
+            margin-top: 0;
             letter-spacing: 2px;
+
+            text-shadow: 3px 3px 0 #FDF5E6;
         }
 
         .button-container {
             display: flex;
             gap: 50px;
+            padding-bottom: 50px; 
         }
 
         button {
@@ -82,9 +124,9 @@
         }
 
         #no-btn {
-            /* We use 'fixed' now based on your previous fix */
             position: relative; 
-            transition: top 0.2s ease, left 0.2s ease; /* Smooth glide for button */
+            transition: top 0.2s ease, left 0.2s ease; 
+            z-index: 10;
         }
 
     </style>
@@ -105,6 +147,7 @@
 
     <div id="success-message" class="screen">
         <h1>YAY! &lt;3</h1>
+        <img src="https://media1.tenor.com/m/S3KOkOku9M4AAAAd/hachiware-chiikawa.gif" alt="Happy Hachiware Chiikawa dancing">
     </div>
 
     <script>
@@ -114,53 +157,41 @@
         const noBtn = document.getElementById('no-btn');
         const yesBtn = document.getElementById('yes-btn');
 
-        // --- STEP 1: TRANSITION FROM INTRO TO QUESTION ---
         setTimeout(() => {
-            // 1. Fade out intro
             introScreen.style.opacity = '0';
-            introScreen.style.pointerEvents = 'none'; // Prevent interaction
+            introScreen.style.pointerEvents = 'none'; 
 
-            // 2. Wait 1 second (match CSS transition), then show Question
             setTimeout(() => {
-                introScreen.style.display = 'none'; // Remove from flow
-                
-                questionScreen.style.pointerEvents = 'auto'; // Enable clicking
-                questionScreen.style.opacity = '1'; // Fade in
+                introScreen.style.display = 'none'; 
+                questionScreen.style.pointerEvents = 'auto'; 
+                questionScreen.style.opacity = '1'; 
             }, 1000);
 
-        }, 5000); // Starts fade process at 5s, completes at 6s
+        }, 5000); 
 
 
-        // --- STEP 2: THE MOVING BUTTON ---
         function moveButton() {
-            // Switch to fixed so it moves relative to screen
             noBtn.style.position = 'fixed'; 
             
-            // Calculate random position
-            // Subtract button width/height so it stays on screen
-            const x = Math.random() * (window.innerWidth - noBtn.offsetWidth);
-            const y = Math.random() * (window.innerHeight - noBtn.offsetHeight);
+            const x = Math.random() * (window.innerWidth - noBtn.offsetWidth - 20);
+            const y = Math.random() * (window.innerHeight - noBtn.offsetHeight - 20);
 
-            noBtn.style.left = x + 'px';
-            noBtn.style.top = y + 'px';
+            noBtn.style.left = Math.max(0, x) + 'px'; 
+            noBtn.style.top = Math.max(0, y) + 'px';
         }
 
-        // Trigger movement
         noBtn.addEventListener('mouseover', moveButton);
-        noBtn.addEventListener('touchstart', moveButton); // For mobile phones
+        noBtn.addEventListener('touchstart', moveButton); 
 
 
         // --- STEP 3: TRANSITION TO SUCCESS ---
         yesBtn.addEventListener('click', () => {
-            // 1. Fade out Question
             questionScreen.style.opacity = '0';
             questionScreen.style.pointerEvents = 'none';
 
-            // 2. Wait 1 second, then show Success
             setTimeout(() => {
                 questionScreen.style.display = 'none';
-                
-                successScreen.style.opacity = '1'; // Fade in success
+                successScreen.style.opacity = '1'; 
             }, 1000);
         });
 
